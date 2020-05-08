@@ -4,6 +4,15 @@
 #include "sensors/DEV_Config.h"
 #include "sensors/TSL2591.h"
 #include "sensors/DHT.h"
+#include "sensors/OneWire.h"
+#include "sensors/DallasTemperature.h"
+// Data wire is plugged into digital pin 2 on the Arduino
+#define ONE_WIRE_BUS 4
+
+// Setup a oneWire instance to communicate with any OneWire device
+OneWire oneWire(ONE_WIRE_BUS);	
+// Pass oneWire reference to DallasTemperature library
+DallasTemperature sensors(&oneWire);
 
 // Variables for Light Sensors
 UWORD Lux = 0;
@@ -26,6 +35,7 @@ dht_results my_dht = {0, 0};
 // Declare all functions
 uint16_t read_light_sensor();
 dht_results read_dht(bool);
+float ds18b20_temperature(void);
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,6 +44,7 @@ void setup() {
   Serial.print("Light Sensor Initialized\n");
   TSL2591_Init();
   dht.begin();
+  sensors.begin();	// Start up DS18B20 library
   Serial.println("All Sensors Initialized");
 }
 
@@ -49,6 +60,11 @@ void loop() {
     Serial.print("% : ");
     Serial.print(my_dht.temperature);
     Serial.println(F("°C/F "));
+
+    Serial.println("DS18B20 Temperature reading");
+    float temp = ds18b20_temperature();
+    Serial.print(temp);
+    Serial.println(F("°C"));   
 
     delay(2000);
 }
@@ -95,4 +111,15 @@ dht_results read_dht(bool converter) {
   output.temperature = t;
 
   return output;
+}
+
+
+float ds18b20_temperature()
+{ 
+  // Send the command to get temperatures
+  sensors.requestTemperatures(); 
+
+  //print the temperature in Celsius
+  float temperature = sensors.getTempCByIndex(0);
+  return temperature;
 }
