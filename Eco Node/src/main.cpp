@@ -8,6 +8,9 @@
 // Variables for Light Sensors
 UWORD Lux = 0;
 
+// Declare all functions
+uint16_t read_light_sensor();
+
 void setup() {
   // put your setup code here, to run once:
   // Initialize the sensor
@@ -18,10 +21,21 @@ void setup() {
 }
 
 void loop() {
-    Lux = TSL2591_Read_Lux();
+    Lux = read_light_sensor();
     Serial.print("Lux = ");
     Serial.print(Lux);
     Serial.print("\r\n");
-    TSL2591_SET_LuxInterrupt(50,200);
     delay(1000);
+}
+
+
+/*
+Function Reads the Light sensor parameter
+
+*/
+uint16_t read_light_sensor()
+{
+    uint16_t lux_value;
+    lux_value = TSL2591_Read_Lux();
+    return lux_value;
 }
