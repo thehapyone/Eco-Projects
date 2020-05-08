@@ -9,7 +9,7 @@
 UWORD Lux = 0;
 
 // Variables for DHT Sensors
-#define DHTPIN 2     // Digital pin connected to the DHT sensor
+#define DHTPIN 5     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT21   // DHT 21 (AM2301)
 // Initialize DHT sensor.
 DHT dht(DHTPIN, DHTTYPE);
@@ -30,6 +30,7 @@ dht_results read_dht(bool);
 void setup() {
   // put your setup code here, to run once:
   // Initialize the sensor
+  Serial.begin(115200);
   //DEV_ModuleInit();
   Serial.print("Light Sensor Initialized\n");
   //TSL2591_Init();
