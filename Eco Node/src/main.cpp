@@ -14,6 +14,7 @@ void setup() {
   DEV_ModuleInit();
   Serial.print("Light Sensor Initialized\n");
   TSL2591_Init();
+  Serial.println("Started");
 }
 
 void loop() {
@@ -22,4 +23,5 @@ void loop() {
     Serial.print(Lux);
     Serial.print("\r\n");
     TSL2591_SET_LuxInterrupt(50,200);
+    delay(1000);
 }
