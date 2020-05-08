@@ -6,6 +6,8 @@
 #include "sensors/DHT.h"
 #include "sensors/OneWire.h"
 #include "sensors/DallasTemperature.h"
+#include <EEPROM.h>
+#include "sensors/GravityTDS.h"
 // Data wire is plugged into digital pin 2 on the Arduino
 #define ONE_WIRE_BUS 4
 
@@ -13,6 +15,14 @@
 OneWire oneWire(ONE_WIRE_BUS);	
 // Pass oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
+
+/////////////////////////////////
+
+#define TdsSensorPin 34
+GravityTDS gravityTds;
+
+float temperature = 25;
+float tdsValue = 0;
 
 // Variables for Light Sensors
 UWORD Lux = 0;
@@ -36,6 +46,7 @@ dht_results my_dht = {0, 0};
 uint16_t read_light_sensor();
 dht_results read_dht(bool);
 float ds18b20_temperature(void);
+float tds_sensor(float);
 
 void setup() {
   // put your setup code here, to run once:
@@ -45,6 +56,12 @@ void setup() {
   TSL2591_Init();
   dht.begin();
   sensors.begin();	// Start up DS18B20 library
+  //////////////////////
+  gravityTds.setPin(TdsSensorPin);
+  gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
+  gravityTds.setAdcRange(4096);  //1024 for 10bit ADC;4096 for 12bit ADC
+  gravityTds.begin();  //initialization
+
   Serial.println("All Sensors Initialized");
 }
 
@@ -66,10 +83,25 @@ void loop() {
     Serial.print(temp);
     Serial.println(F("°C"));   
 
+    tdsValue = tds_sensor(temp);
+    Serial.print(tdsValue,0);
+    Serial.println("ppm");
+
+
     delay(2000);
 }
 
 
+float tds_sensor(float temp1)
+{
+    //temperature = readTemperature();  //add your temperature sensor and read it
+    gravityTds.setTemperature(temp1);  // set the temperature and execute temperature compensation
+    gravityTds.update();  //sample and calculate 
+    float tdsValue5;
+    tdsValue5 = gravityTds.getTdsValue();  // then get the value
+
+    return tdsValue5;
+}
 /*
 Function Reads the Light sensor parameter
 
