@@ -30,24 +30,25 @@ dht_results read_dht(bool);
 void setup() {
   // put your setup code here, to run once:
   // Initialize the sensor
-  Serial.begin(115200);
-  //DEV_ModuleInit();
+  DEV_ModuleInit();
   Serial.print("Light Sensor Initialized\n");
-  //TSL2591_Init();
+  TSL2591_Init();
   dht.begin();
   Serial.println("All Sensors Initialized");
 }
 
 void loop() {
-    //Lux = read_light_sensor();
+    Lux = read_light_sensor();
     Serial.print("Lux = ");
     Serial.print(Lux);
     Serial.print("\r\n");
+
     my_dht = read_dht(false);
     Serial.println("DHT Results");
     Serial.print(my_dht.humidity);
-    Serial.print(" : ");
+    Serial.print("% : ");
     Serial.print(my_dht.temperature);
+    Serial.println(F("°C/F "));
 
     delay(2000);
 }
