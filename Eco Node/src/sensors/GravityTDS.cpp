@@ -62,7 +62,7 @@ void GravityTDS::setKvalueAddress(int address)
 void GravityTDS::begin()
 {
 	pinMode(this->pin,INPUT);
-	readKValues();
+	//readKValues();
 }
 
 float GravityTDS::getKvalue()
