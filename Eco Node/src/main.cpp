@@ -50,16 +50,16 @@ float tds_sensor(float);
 
 // Initialize the EcoSensor library
 // Using the TLS2591X
-EcoSensor ecosensor(ECO_TLS2591X);
+EcoSensor lightsensor(ECO_TLS2591X);
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   // Initialize the sensor
-  ecosensor.initialize();
+  lightsensor.initialize();
   Serial.print("Light Sensor Initialized\n");
   Serial.print("Get Sensor type : ");
-  Serial.print(ecosensor.getSensor());
+  Serial.print(lightsensor.getSensor());
   //
   dht.begin();
   sensors.begin();	// Start up DS18B20 library
@@ -116,7 +116,7 @@ Function Reads the Light sensor parameter
 uint16_t read_light_sensor()
 {
     uint16_t lux_value;
-    lux_value = ecosensor.readSensor();
+    lux_value = lightsensor.readSensor();
     return lux_value;
 }
 
