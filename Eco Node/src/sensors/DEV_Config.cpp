@@ -132,8 +132,7 @@ Info:
 ******************************************************************************/
 UBYTE DEV_ModuleInit(void)
 {
-    Serial.begin(115200);
-    GPIO_Config();
+    //GPIO_Config(); Not used.
     DEV_I2C_Init(0x29);
     return 0;
 }
