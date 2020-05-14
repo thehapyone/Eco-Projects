@@ -4,23 +4,19 @@
 #include "mqtt/PubSubClient.h"
 // adding library support
 #include "sensors/DHT.h"
-#include "sensors/OneWire.h"
-#include "sensors/DallasTemperature.h"
 #include <EEPROM.h>
 #include "sensors/GravityTDS.h"
 #include "sensors/ecosensor.h"
 
-// Data wire is plugged into digital pin 2 on the Arduino
-#define ONE_WIRE_BUS 4
 
-// Setup a oneWire instance to communicate with any OneWire device
-OneWire oneWire(ONE_WIRE_BUS);	
-// Pass oneWire reference to DallasTemperature library
-DallasTemperature sensors(&oneWire);
-
-/////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////
+#define waterSensorPin 4
 #define TdsSensorPin 34
+#define DHTPIN 5     // Digital pin connected to the DHT sensor
+
+
+////////////////////////////////////////////////////////////////////////
+
 GravityTDS gravityTds;
 
 float temperature = 25;
@@ -30,7 +26,6 @@ float tdsValue = 0;
 UWORD Lux = 0;
 
 // Variables for DHT Sensors
-#define DHTPIN 5     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT21   // DHT 21 (AM2301)
 // Initialize DHT sensor.
 DHT dht(DHTPIN, DHTTYPE);
@@ -56,6 +51,9 @@ void reconnect();
 // Initialize the EcoSensor library
 // Using the TLS2591X
 EcoSensor lightsensor(ECO_TLS2591X);
+
+// For the DS18B20 Sensor
+EcoSensor waterTempSensor(ECO_DS18B20, waterSensorPin);
 
 // MQTT Settings here
 // Replace the next variables with your SSID/Password combination
@@ -90,12 +88,15 @@ void sensorsSetup()
 {
   // Initialize the sensor
   lightsensor.initialize();
+
   Serial.print("Light Sensor Initialized\n");
   Serial.print("Get Sensor type : ");
   Serial.print(lightsensor.getSensor());
+
+  // Initialize DS18b20 sensor
+  waterTempSensor.initialize();
   //
   dht.begin();
-  sensors.begin();	// Start up DS18B20 library
   //////////////////////
   gravityTds.setPin(TdsSensorPin);
   gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
@@ -272,10 +273,7 @@ dht_results read_dht(bool converter) {
 
 float ds18b20_temperature()
 { 
-  // Send the command to get temperatures
-  sensors.requestTemperatures(); 
-
   //print the temperature in Celsius
-  float temperature = sensors.getTempCByIndex(0);
+  float temperature = waterTempSensor.readSensor();
   return temperature;
 }

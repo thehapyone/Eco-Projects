@@ -16,11 +16,18 @@
 #include <stdint.h>
 #include "DEV_Config.h"
 #include "TSL2591.h"
+#include "OneWire.h"
+#include "DallasTemperature.h"
 
 #define ECO_TLS2591X 1
 #define ECO_AM2301 2
 #define ECO_DS18B20 3
 #define ECO_GRAVITY_TDS 4
+
+
+#define ONE_WIRE_BUS 4
+
+
 
 class EcoSensor
 {
@@ -29,11 +36,18 @@ class EcoSensor
     uint8_t sensorType = 0;
     uint8_t sensorPin = 0;
 
+    // variabls for dallas sensors
+    DallasTemperature dallasSensors;
+
     uint8_t ECO_ENABLE_DEBUG = 0;
 
     void _initializeSensor();
 
+    // for integer base values
     uint16_t sensorValue = 0;
+    // for floating base values
+    float sensorValue_float = 0.0;
+
 
 
     public:

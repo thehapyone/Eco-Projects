@@ -165,7 +165,7 @@ UBYTE TSL2591_Init(void)
     //Serial.print(TSL2591_Read_Byte(ID_REGISTER),HEX);
     //Serial.print("\r\n");
     TSL2591_Enable();
-    TSL2591_Set_Gain(MEDIUM_AGAIN);//25X GAIN
+    TSL2591_Set_Gain(HIGH_AGAIN);//25X GAIN
     TSL2591_Set_IntegralTime(ATIME_200MS);//200ms Integration time
     TSL2591_Write_Byte(PERSIST_REGISTER, 0x01);//filter
     TSL2591_Disable();
