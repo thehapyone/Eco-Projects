@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include <WiFi.h>
+#include "mqtt/PubSubClient.h"
 // adding library support
 #include "sensors/DHT.h"
 #include "sensors/OneWire.h"
@@ -47,14 +49,39 @@ uint16_t read_light_sensor();
 dht_results read_dht(bool);
 float ds18b20_temperature(void);
 float tds_sensor(float);
+void sensorsSetup(void);
 
 // Initialize the EcoSensor library
 // Using the TLS2591X
 EcoSensor lightsensor(ECO_TLS2591X);
 
+// MQTT Settings here
+// Replace the next variables with your SSID/Password combination
+const char* ssid = "The Adventurer";
+const char* password = "sayiloveyou";
+
+// Add your MQTT Broker IP address, example:
+//const char* mqtt_server = "192.168.1.144";
+const char* mqtt_server = "192.168.1.247";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+long lastMsg = 0;
+char msg[50];
+int value = 0;
+
+// End of MQTT config
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+
+  delay(1000);
+  sensorsSetup();
+  Serial.println("All Sensors Initialized");
+}
+
+void sensorsSetup()
+{
   // Initialize the sensor
   lightsensor.initialize();
   Serial.print("Light Sensor Initialized\n");
@@ -68,8 +95,6 @@ void setup() {
   gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
   gravityTds.setAdcRange(4096);  //1024 for 10bit ADC;4096 for 12bit ADC
   gravityTds.begin();  //initialization
-
-  Serial.println("All Sensors Initialized");
 }
 
 void loop() {
