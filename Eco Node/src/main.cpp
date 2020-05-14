@@ -57,6 +57,7 @@ void reconnect();
 // Using the TLS2591X
 EcoSensor lightsensor(ECO_TLS2591X);
 
+
 // MQTT Settings here
 // Replace the next variables with your SSID/Password combination
 const char* ssid = "The Adventurer";
@@ -90,6 +91,7 @@ void sensorsSetup()
 {
   // Initialize the sensor
   lightsensor.initialize();
+
   Serial.print("Light Sensor Initialized\n");
   Serial.print("Get Sensor type : ");
   Serial.print(lightsensor.getSensor());

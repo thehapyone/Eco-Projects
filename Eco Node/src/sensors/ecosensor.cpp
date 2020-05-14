@@ -16,6 +16,16 @@ EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin)
 {
     this->sensorType = sensorType;
     this->sensorPin = sensorPin;
+
+    if (this->sensorType == ECO_DS18B20)
+    {
+        // then create the instance to the OneWire
+        // Setup a oneWire instance to communicate with any OneWire device
+        OneWire oneWire(this->sensorType);	
+        // Pass oneWire reference to DallasTemperature library
+        DallasTemperature sensors(&oneWire);
+        this->dallasSensors = sensors;
+    }
     
 }
 
@@ -29,7 +39,9 @@ EcoSensor::~EcoSensor()
 SensorType Values::::
 TLS2591X sensor type = 1
 AM2301 sensor type = 2
+DS18B20 Sensor type = 3
 */
+
 
 // Functions initialize the set sensor type
 // assuming working with TLS2591X sensor type
@@ -46,10 +58,19 @@ void EcoSensor::_initializeSensor()
         TSL2591_Init();
         if (ECO_ENABLE_DEBUG)
         {
-            Serial.println("Sensor Initialized successfully");
+            Serial.println("Light Sensor Initialized successfully");
         }
         break;
-    
+
+    case ECO_DS18B20:
+        // intialize the sensor
+        this->dallasSensors.begin();
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.println("Dallas Temperature Initialized");
+        }
+        break;
+
     default:
         break;
     }
@@ -85,15 +106,29 @@ int16_t EcoSensor::readSensor()
         lux_value = TSL2591_Read_Lux();
         this->sensorValue = lux_value;
         break;
-    
+
+    case ECO_DS18B20:
+        /* code */
+        this->dallasSensors.requestTemperatures();
+        //print the temperature in Celsius
+        this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
+        break;
+        
     default:
         break;
         
     }
 
-    // ideally, it should return a struct or something similar to handle multiple values.
-    return this->sensorValue;
+    if (this->sensorType == ECO_TLS2591X)
+        return this->sensorValue;
+    else if (this->sensorType == ECO_DS18B20)
+        return this->sensorValue_float;
+    else
+        return this->sensorValue;
+    
 }
+
+
 
 void EcoSensor::enableDebug()
 {
