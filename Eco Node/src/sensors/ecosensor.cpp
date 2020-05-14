@@ -44,6 +44,10 @@ void EcoSensor::_initializeSensor()
         // Sensor doesn't require setting of pin. It is based on I2C
         DEV_ModuleInit();
         TSL2591_Init();
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.println("Sensor Initialized successfully");
+        }
         break;
     
     default:
@@ -77,7 +81,7 @@ int16_t EcoSensor::readSensor()
     {
     case ECO_TLS2591X:
         /* code */
-        uint8_t lux_value;
+        uint16_t lux_value;
         lux_value = TSL2591_Read_Lux();
         this->sensorValue = lux_value;
         break;
@@ -89,4 +93,16 @@ int16_t EcoSensor::readSensor()
 
     // ideally, it should return a struct or something similar to handle multiple values.
     return this->sensorValue;
+}
+
+void EcoSensor::enableDebug()
+{
+    // set the debug
+    this->ECO_ENABLE_DEBUG = 1;
+}
+
+void EcoSensor::disableDebug()
+{
+    // disable print debug
+    this->ECO_ENABLE_DEBUG = 0;
 }

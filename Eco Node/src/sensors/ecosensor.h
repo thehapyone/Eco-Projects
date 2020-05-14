@@ -22,14 +22,14 @@
 #define ECO_DS18B20 3
 #define ECO_GRAVITY_TDS 4
 
-#define ECO_ENABLE_DEBUG 0
-
 class EcoSensor
 {
     private:
     // some variables
     uint8_t sensorType = 0;
     uint8_t sensorPin = 0;
+
+    uint8_t ECO_ENABLE_DEBUG = 0;
 
     void _initializeSensor();
 
@@ -49,6 +49,10 @@ class EcoSensor
     void setSensor(uint8_t sensor_type);
     uint8_t getSensor();
     int16_t readSensor();
+
+    // debug information
+    void enableDebug(void);
+    void disableDebug(void);
 
 };
 
