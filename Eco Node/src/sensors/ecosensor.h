@@ -38,7 +38,7 @@ class EcoSensor
     public:
     // default constructor
     EcoSensor();
-    // Constructor for setting the 
+    // Constructor for the Sensor Class
     EcoSensor(uint8_t sensorType);
     EcoSensor(uint8_t sensorType, uint8_t sensorPin);
     // deconstructor. remove and clear the memory if needed
