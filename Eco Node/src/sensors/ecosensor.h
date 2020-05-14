@@ -14,14 +14,15 @@
 #define ECOSENSOR_H
 
 #include <stdint.h>
+#include "DEV_Config.h"
 #include "TSL2591.h"
 
-#define TLS2591X 1
-#define AM2301 2
-#define DS18B20 3
-#define GRAVITY_TDS 4
+#define ECO_TLS2591X 1
+#define ECO_AM2301 2
+#define ECO_DS18B20 3
+#define ECO_GRAVITY_TDS 4
 
-#define ENABLE_DEBUG 0
+#define ECO_ENABLE_DEBUG 0
 
 class EcoSensor
 {
@@ -48,9 +49,6 @@ class EcoSensor
     void setSensor(uint8_t sensor_type);
     uint8_t getSensor();
     int16_t readSensor();
-
-
-
 
 };
 

@@ -19,6 +19,12 @@ EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin)
     
 }
 
+EcoSensor::~EcoSensor()
+{
+    // the disconstructor.
+    // nothing happens here
+}
+
 /*
 SensorType Values::::
 TLS2591X sensor type = 1
@@ -33,7 +39,7 @@ void EcoSensor::_initializeSensor()
     switch (this->sensorType)
     {
     // For TLS2591 Light Sensor
-    case TLS2591X:
+    case ECO_TLS2591X:
         // intialize the sensor
         // Sensor doesn't require setting of pin. It is based on I2C
         DEV_ModuleInit();
@@ -69,7 +75,7 @@ int16_t EcoSensor::readSensor()
     // get the latest sensor reading
     switch (this->sensorType)
     {
-    case TLS2591X:
+    case ECO_TLS2591X:
         /* code */
         uint8_t lux_value;
         lux_value = TSL2591_Read_Lux();

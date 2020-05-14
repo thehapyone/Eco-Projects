@@ -1,13 +1,13 @@
 #include <Arduino.h>
 
 // adding library support
-#include "sensors/DEV_Config.h"
-#include "sensors/TSL2591.h"
 #include "sensors/DHT.h"
 #include "sensors/OneWire.h"
 #include "sensors/DallasTemperature.h"
 #include <EEPROM.h>
 #include "sensors/GravityTDS.h"
+#include "sensors/ecosensor.h"
+
 // Data wire is plugged into digital pin 2 on the Arduino
 #define ONE_WIRE_BUS 4
 
@@ -48,12 +48,19 @@ dht_results read_dht(bool);
 float ds18b20_temperature(void);
 float tds_sensor(float);
 
+// Initialize the EcoSensor library
+// Using the TLS2591X
+EcoSensor ecosensor(ECO_TLS2591X);
+
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(115200);
   // Initialize the sensor
-  DEV_ModuleInit();
+  ecosensor.initialize();
   Serial.print("Light Sensor Initialized\n");
-  TSL2591_Init();
+  Serial.print("Get Sensor type : ");
+  Serial.print(ecosensor.getSensor());
+  //
   dht.begin();
   sensors.begin();	// Start up DS18B20 library
   //////////////////////
@@ -109,7 +116,7 @@ Function Reads the Light sensor parameter
 uint16_t read_light_sensor()
 {
     uint16_t lux_value;
-    lux_value = TSL2591_Read_Lux();
+    lux_value = ecosensor.readSensor();
     return lux_value;
 }
 
