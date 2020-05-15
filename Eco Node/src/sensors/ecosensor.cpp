@@ -39,7 +39,7 @@ EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin, uint8_t dhtSensorTyp
     {
         // then create the instance to the DHT
         DHT dhtTemp(sensorPin, dhtSensorType);
-        this->dhtSensor = dhtTemp;
+        this->dhtSensors = dhtTemp;
     }
     
 }
@@ -88,7 +88,7 @@ void EcoSensor::_initializeSensor()
 
     case ECO_DHT:
         // intialize the sensor
-        this->dhtSensor.begin();
+        this->dhtSensors.begin();
         if (ECO_ENABLE_DEBUG)
         {
             Serial.println("DHT Sensor Initialized");
@@ -159,6 +159,31 @@ int16_t EcoSensor::readSensor()
     
 }
 
+
+multiValues EcoSensor::readSensorAll()
+{
+    // structure result
+    multiValues sensorValues;
+    // get the latest sensor reading
+    switch (this->sensorType)
+    {
+    case ECO_DHT:
+        // package the results in a structure
+        sensorValues.humidity = this->dhtSensors.readHumidity();
+        // read in celcius 
+        sensorValues.temperature = this->dhtSensors.readTemperature();
+        // package the results in a structure
+
+        break;
+        
+    default:
+        break;
+        
+    }
+
+    return sensorValues;
+    
+}
 
 
 void EcoSensor::enableDebug()

@@ -25,23 +25,9 @@ float tdsValue = 0;
 // Variables for Light Sensors
 UWORD Lux = 0;
 
-// Variables for DHT Sensors
-#define DHTTYPE DHT21   // DHT 21 (AM2301)
-// Initialize DHT sensor.
-DHT dht(DHTPIN, DHTTYPE);
-
-struct dht_results
-{
-  /* data */
-  float temperature;
-  float humidity;
-};
-
-dht_results my_dht = {0, 0};
-
 // Declare all functions
 uint16_t read_light_sensor();
-dht_results read_dht(bool);
+multiValues read_dht();
 float ds18b20_temperature(void);
 float tds_sensor(float);
 void sensorsSetup(void);
@@ -54,6 +40,12 @@ EcoSensor lightsensor(ECO_TLS2591X);
 
 // For the DS18B20 Sensor
 EcoSensor waterTempSensor(ECO_DS18B20, waterSensorPin);
+
+// For the DHT Sensor
+EcoSensor dhtMultiSensor(ECO_DHT, DHTPIN, AM2301);
+
+// Hold the results for the DHT sensors
+multiValues my_dht;
 
 // MQTT Settings here
 // Replace the next variables with your SSID/Password combination
@@ -89,14 +81,11 @@ void sensorsSetup()
   // Initialize the sensor
   lightsensor.initialize();
 
-  Serial.print("Light Sensor Initialized\n");
-  Serial.print("Get Sensor type : ");
-  Serial.print(lightsensor.getSensor());
-
   // Initialize DS18b20 sensor
   waterTempSensor.initialize();
-  //
-  dht.begin();
+
+  // DHT Sensor
+  dhtMultiSensor.initialize();
   //////////////////////
   gravityTds.setPin(TdsSensorPin);
   gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
@@ -129,8 +118,8 @@ void loop() {
     Serial.print(Lux);
     Serial.print("\r\n");
 
-    /*
-    my_dht = read_dht(false);
+    
+    my_dht = read_dht();
     Serial.println("DHT Results");
     Serial.print(my_dht.humidity);
     Serial.print("% : ");
@@ -141,6 +130,8 @@ void loop() {
     float temp = ds18b20_temperature();
     Serial.print(temp);
     Serial.println(F("°C"));   
+
+    /*
 
     tdsValue = tds_sensor(temp);
     Serial.print(tdsValue,0);
@@ -227,6 +218,7 @@ float tds_sensor(float temp1)
 
     return tdsValue5;
 }
+
 /*
 Function Reads the Light sensor parameter
 
@@ -239,33 +231,14 @@ uint16_t read_light_sensor()
 }
 
 
-dht_results read_dht(bool converter) {
+multiValues read_dht() {
 
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-  float h = dht.readHumidity();
-  float t = 0;
-
-  dht_results output = {0, 0};
-  
-  if (converter == true)
-  {
-    // Read temperature as Fahrenheit (isFahrenheit = true)
-    t = dht.readTemperature(true);
-  }
-  else 
-  {
-    // Read temperature as Celsius (the default)
-    t = dht.readTemperature();
-  }
+  multiValues output = dhtMultiSensor.readSensorAll();
 
   // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t)) {
+  if (isnan(output.humidity) || isnan(output.temperature)) {
     Serial.println(F("Failed to read from DHT sensor!"));
-    return output;
   }
-  output.humidity = h;
-  output.temperature = t;
 
   return output;
 }

@@ -25,11 +25,14 @@
 #define ECO_DS18B20 3
 #define ECO_GRAVITY_TDS 4
 
-struct dhtReadings
+/* 
+Structure For holding Sensors with multiple values
+*/
+struct multiValues
 {
   /* data */
-  float temperature;
-  float humidity;
+  float temperature = 0;
+  float humidity = 0;
 };
 
 class EcoSensor
@@ -42,7 +45,7 @@ class EcoSensor
     // variabls for dallas sensors
     DallasTemperature dallasSensors;
     // Variable for DHT sensor
-    DHT dhtSensor;
+    DHT dhtSensors;
 
     uint8_t ECO_ENABLE_DEBUG = 0;
 
@@ -70,7 +73,10 @@ class EcoSensor
     void initialize();
     void setSensor(uint8_t sensor_type);
     uint8_t getSensor();
+    // single value read
     int16_t readSensor();
+    // multiple value read
+    multiValues readSensorAll();
 
     // debug information
     void enableDebug(void);
