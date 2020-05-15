@@ -136,6 +136,11 @@ int16_t EcoSensor::readSensor()
         this->dallasSensors.requestTemperatures();
         //print the temperature in Celsius
         this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.print("Sensor readings: ");
+            Serial.println(this->sensorValue_float);
+        }
         break;
 
     case ECO_DHT:

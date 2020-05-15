@@ -83,6 +83,8 @@ void sensorsSetup()
 
   // Initialize DS18b20 sensor
   waterTempSensor.initialize();
+  // enable debug
+  waterTempSensor.enableDebug();
 
   // DHT Sensor
   dhtMultiSensor.initialize();
