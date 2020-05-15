@@ -3,7 +3,6 @@
 #include <WiFi.h>
 #include "mqtt/PubSubClient.h"
 // adding library support
-#include "sensors/DHT.h"
 #include <EEPROM.h>
 #include "sensors/GravityTDS.h"
 #include "sensors/ecosensor.h"
@@ -81,10 +80,11 @@ void sensorsSetup()
   // Initialize the sensor
   lightsensor.initialize();
 
-  // Initialize DS18b20 sensor
-  waterTempSensor.initialize();
   // enable debug
   waterTempSensor.enableDebug();
+  // Initialize DS18b20 sensor
+  waterTempSensor.initialize();
+
 
   // DHT Sensor
   dhtMultiSensor.initialize();
@@ -131,7 +131,8 @@ void loop() {
     Serial.println("DS18B20 Temperature reading");
     float temp = ds18b20_temperature();
     Serial.print(temp);
-    Serial.println(F("°C"));   
+    Serial.println(F("°C")); 
+
 
     /*
 
@@ -249,6 +250,6 @@ multiValues read_dht() {
 float ds18b20_temperature()
 { 
   //print the temperature in Celsius
-  float temperature = waterTempSensor.readSensor();
-  return temperature;
+  float temp = waterTempSensor.readSensorFloat();
+  return temp;
 }

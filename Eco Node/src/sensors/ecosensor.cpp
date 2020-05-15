@@ -21,10 +21,11 @@ EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin)
     {
         // then create the instance to the OneWire
         // Setup a oneWire instance to communicate with any OneWire device
-        OneWire oneWire(this->sensorType);	
+        //OneWire oneWire(this->sensorPin);	
+        this->oneWireDallas.begin(this->sensorPin);
         // Pass oneWire reference to DallasTemperature library
-        DallasTemperature sensors(&oneWire);
-        this->dallasSensors = sensors;
+        this->dallasSensors.setOneWire(&this->oneWireDallas);
+
     }
     
 }
@@ -119,6 +120,11 @@ uint8_t EcoSensor::getSensor()
     return this->sensorType;
 }
 
+uint8_t EcoSensor::getSensorPin()
+{
+    return this->sensorPin;
+}
+
 int16_t EcoSensor::readSensor()
 {
     // get the latest sensor reading
@@ -135,19 +141,8 @@ int16_t EcoSensor::readSensor()
         /* code */
         this->dallasSensors.requestTemperatures();
         //print the temperature in Celsius
-        this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
-        if (ECO_ENABLE_DEBUG)
-        {
-            Serial.print("Sensor readings: ");
-            Serial.println(this->sensorValue_float);
-        }
-        break;
+        this->sensorValue = this->dallasSensors.getTempCByIndex(0);
 
-    case ECO_DHT:
-        /* code */
-        this->dallasSensors.requestTemperatures();
-        //print the temperature in Celsius
-        this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
         break;
         
     default:
@@ -155,15 +150,38 @@ int16_t EcoSensor::readSensor()
         
     }
 
-    if (this->sensorType == ECO_TLS2591X)
-        return this->sensorValue;
-    else if (this->sensorType == ECO_DS18B20)
-        return this->sensorValue_float;
-    else
-        return this->sensorValue;
+
+    return this->sensorValue;
     
 }
 
+
+float EcoSensor::readSensorFloat()
+{
+    // get the latest sensor reading
+    switch (this->sensorType)
+    {
+
+    case ECO_DS18B20:
+        /* code */
+        this->dallasSensors.requestTemperatures();
+        //print the temperature in Celsius
+        this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.print("Sensor readings: ");
+            Serial.println(this->sensorValue_float);
+        }
+        break;
+        
+    default:
+        break;
+        
+    }
+
+    return this->sensorValue_float;
+    
+}
 
 multiValues EcoSensor::readSensorAll()
 {

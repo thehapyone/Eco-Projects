@@ -43,6 +43,7 @@ class EcoSensor
     uint8_t sensorPin = 0;
 
     // variabls for dallas sensors
+    OneWire oneWireDallas;
     DallasTemperature dallasSensors;
     // Variable for DHT sensor
     DHT dhtSensors;
@@ -51,10 +52,8 @@ class EcoSensor
 
     void _initializeSensor();
 
-
-
     // for integer base values
-    uint16_t sensorValue = 0;
+    int32_t sensorValue = 0;
     // for floating base values
     float sensorValue_float = 0.0;
 
@@ -73,8 +72,11 @@ class EcoSensor
     void initialize();
     void setSensor(uint8_t sensor_type);
     uint8_t getSensor();
+    uint8_t getSensorPin();
     // single value read
     int16_t readSensor();
+    // single value float read
+    float readSensorFloat();
     // multiple value read
     multiValues readSensorAll();
 
