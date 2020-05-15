@@ -18,16 +18,19 @@
 #include "TSL2591.h"
 #include "OneWire.h"
 #include "DallasTemperature.h"
+#include "DHT.h"
 
 #define ECO_TLS2591X 1
-#define ECO_AM2301 2
+#define ECO_DHT 2
 #define ECO_DS18B20 3
 #define ECO_GRAVITY_TDS 4
 
-
-#define ONE_WIRE_BUS 4
-
-
+struct dhtReadings
+{
+  /* data */
+  float temperature;
+  float humidity;
+};
 
 class EcoSensor
 {
@@ -38,16 +41,19 @@ class EcoSensor
 
     // variabls for dallas sensors
     DallasTemperature dallasSensors;
+    // Variable for DHT sensor
+    DHT dhtSensor;
 
     uint8_t ECO_ENABLE_DEBUG = 0;
 
     void _initializeSensor();
 
+
+
     // for integer base values
     uint16_t sensorValue = 0;
     // for floating base values
     float sensorValue_float = 0.0;
-
 
 
     public:
@@ -56,6 +62,8 @@ class EcoSensor
     // Constructor for the Sensor Class
     EcoSensor(uint8_t sensorType);
     EcoSensor(uint8_t sensorType, uint8_t sensorPin);
+    EcoSensor(uint8_t sensorType, uint8_t sensorPin, uint8_t dhtSensorType); // For DHT Sensor type
+
     // deconstructor. remove and clear the memory if needed
     ~EcoSensor();
 

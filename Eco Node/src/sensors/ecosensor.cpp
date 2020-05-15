@@ -29,6 +29,21 @@ EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin)
     
 }
 
+EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin, uint8_t dhtSensorType)
+{
+    this->sensorType = sensorType;
+    this->sensorPin = sensorPin;
+    
+
+    if (this->sensorType == ECO_DHT)
+    {
+        // then create the instance to the DHT
+        DHT dhtTemp(sensorPin, dhtSensorType);
+        this->dhtSensor = dhtTemp;
+    }
+    
+}
+
 EcoSensor::~EcoSensor()
 {
     // the disconstructor.
@@ -71,6 +86,15 @@ void EcoSensor::_initializeSensor()
         }
         break;
 
+    case ECO_DHT:
+        // intialize the sensor
+        this->dhtSensor.begin();
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.println("DHT Sensor Initialized");
+        }
+        break;
+
     default:
         break;
     }
@@ -108,6 +132,13 @@ int16_t EcoSensor::readSensor()
         break;
 
     case ECO_DS18B20:
+        /* code */
+        this->dallasSensors.requestTemperatures();
+        //print the temperature in Celsius
+        this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
+        break;
+
+    case ECO_DHT:
         /* code */
         this->dallasSensors.requestTemperatures();
         //print the temperature in Celsius
