@@ -19,6 +19,8 @@
 #include "OneWire.h"
 #include "DallasTemperature.h"
 #include "DHT.h"
+#include <EEPROM.h>
+#include "sensors/GravityTDS.h"
 
 #define ECO_TLS2591X 1
 #define ECO_DHT 2

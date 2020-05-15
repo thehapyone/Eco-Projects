@@ -1,5 +1,5 @@
 
-#include "ecosensor.h"
+#include "EcoSensors.h"
 
 EcoSensor::EcoSensor()
 {

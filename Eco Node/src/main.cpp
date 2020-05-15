@@ -3,9 +3,8 @@
 #include <WiFi.h>
 #include "mqtt/PubSubClient.h"
 // adding library support
-#include <EEPROM.h>
-#include "sensors/GravityTDS.h"
-#include "sensors/ecosensor.h"
+
+#include "sensors/EcoSensors.h"
 
 
 ////////////////////////////////////////////////////////////////////////
