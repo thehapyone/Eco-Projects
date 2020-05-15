@@ -62,7 +62,7 @@ char msg[50];
 int value = 0;
 
 // Time to send data
-long time_to_send = 5; // in minutes
+long time_to_send = 1; // in minutes
 // publish topic
 const char pubTopic[] = "eco/sensors/in";
 const char subTopic[] = "eco/sensors/out";
