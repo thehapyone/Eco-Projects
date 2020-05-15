@@ -162,6 +162,18 @@ int16_t EcoSensor::readSensor()
         this->sensorValue = this->dallasSensors.getTempCByIndex(0);
 
         break;
+
+    case ECO_GRAVITY_TDS:
+        // update the gravity temperature compensation before this call
+        this->gravitySensorTds.update();
+        this->sensorValue = this->gravitySensorTds.getTdsValue();
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.print(F("TDS readings: "));
+            Serial.println(this->sensorValue);
+        }  
+        break;
+             
         
     default:
         break;
@@ -187,11 +199,22 @@ float EcoSensor::readSensorFloat()
         this->sensorValue_float = this->dallasSensors.getTempCByIndex(0);
         if (ECO_ENABLE_DEBUG)
         {
-            Serial.print("Sensor readings: ");
+            Serial.print(F("Temper readings: "));
             Serial.println(this->sensorValue_float);
         }
         break;
-        
+    
+    case ECO_GRAVITY_TDS:
+        // update the gravity temperature compensation before this call
+        this->gravitySensorTds.update();
+        this->sensorValue_float = this->gravitySensorTds.getTdsValue();
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.print(F("TDS readings: "));
+            Serial.println(this->sensorValue_float);
+        }  
+        break;
+
     default:
         break;
         
@@ -199,6 +222,21 @@ float EcoSensor::readSensorFloat()
 
     return this->sensorValue_float;
     
+}
+
+void EcoSensor::setParameter(uint8_t sensor_type, float value)
+{
+    switch (this->sensorType)
+    {
+    case ECO_GRAVITY_TDS:
+        /* code */
+        // set the temperature compensation value
+        this->gravitySensorTds.setTemperature(value);
+        break;
+    
+    default:
+        break;
+    }
 }
 
 multiValues EcoSensor::readSensorAll()

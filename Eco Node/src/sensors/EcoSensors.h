@@ -90,6 +90,9 @@ class EcoSensor
     // multiple value read
     multiValues readSensorAll();
 
+    // For setting configure parameters
+    void setParameter(uint8_t sensor_type, float value);
+
     // debug information
     void enableDebug(void);
     void disableDebug(void);

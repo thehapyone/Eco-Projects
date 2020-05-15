@@ -45,6 +45,9 @@ EcoSensor dhtMultiSensor(ECO_DHT, DHTPIN, AM2301);
 // Hold the results for the DHT sensors
 multiValues my_dht;
 
+// For TDS Sensor
+EcoSensor gravitySensor(ECO_GRAVITY_TDS, TdsSensorPin);
+
 // MQTT Settings here
 // Replace the next variables with your SSID/Password combination
 const char* ssid = "The Adventurer";
@@ -88,10 +91,7 @@ void sensorsSetup()
   // DHT Sensor
   dhtMultiSensor.initialize();
   //////////////////////
-  gravityTds.setPin(TdsSensorPin);
-  gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
-  gravityTds.setAdcRange(4096);  //1024 for 10bit ADC;4096 for 12bit ADC
-  gravityTds.begin();  //initialization
+  gravitySensor.initialize();
 }
 
 void loop() {
@@ -213,10 +213,9 @@ void reconnect() {
 float tds_sensor(float temp1)
 {
     //temperature = readTemperature();  //add your temperature sensor and read it
-    gravityTds.setTemperature(temp1);  // set the temperature and execute temperature compensation
-    gravityTds.update();  //sample and calculate 
+    gravitySensor.setParameter(ECO_GRAVITY_TDS, temp1);  // set the temperature and execute temperature compensation
     float tdsValue5;
-    tdsValue5 = gravityTds.getTdsValue();  // then get the value
+    tdsValue5 = gravitySensor.readSensorFloat();  // then get the value
 
     return tdsValue5;
 }
