@@ -27,6 +27,16 @@ EcoSensor::EcoSensor(uint8_t sensorType, uint8_t sensorPin)
         this->dallasSensors.setOneWire(&this->oneWireDallas);
 
     }
+
+    if (this->sensorType == ECO_GRAVITY_TDS)
+    {
+        // set the pin for gravity
+        this->gravitySensorTds.setPin(this->sensorPin);
+        // other inilization
+        this->gravitySensorTds.setAref(AREF_VOLTAGE);
+        this->gravitySensorTds.setAdcRange(ADC_RESOLUTION);
+
+    }
     
 }
 
@@ -95,6 +105,14 @@ void EcoSensor::_initializeSensor()
             Serial.println("DHT Sensor Initialized");
         }
         break;
+
+    case ECO_GRAVITY_TDS:
+        // initialize the sensor
+        this->gravitySensorTds.begin();
+        if (ECO_ENABLE_DEBUG)
+        {
+            Serial.println("Gravity Sensor Initialized");
+        }
 
     default:
         break;

@@ -37,6 +37,12 @@ struct multiValues
   float humidity = 0;
 };
 
+// Gravity related parameters
+  //////////////////////
+  #define AREF_VOLTAGE 3.3
+  #define ADC_RESOLUTION 4096 //1024 for 10bit ADC;4096 for 12bit AD
+
+
 class EcoSensor
 {
     private:
@@ -49,6 +55,8 @@ class EcoSensor
     DallasTemperature dallasSensors;
     // Variable for DHT sensor
     DHT dhtSensors;
+    // Variable for Gravity sensor
+    GravityTDS gravitySensorTds;
 
     uint8_t ECO_ENABLE_DEBUG = 0;
 
