@@ -15,8 +15,6 @@
 
 ////////////////////////////////////////////////////////////////////////
 
-GravityTDS gravityTds;
-
 float temperature = 25;
 float tdsValue = 0;
 
@@ -82,11 +80,8 @@ void sensorsSetup()
   // Initialize the sensor
   lightsensor.initialize();
 
-  // enable debug
-  waterTempSensor.enableDebug();
   // Initialize DS18b20 sensor
   waterTempSensor.initialize();
-
 
   // DHT Sensor
   dhtMultiSensor.initialize();
@@ -133,12 +128,9 @@ void loop() {
     Serial.println(F("°C")); 
 
 
-    /*
-
     tdsValue = tds_sensor(temp);
-    Serial.print(tdsValue,0);
+    Serial.print(tdsValue, 1);
     Serial.println("ppm");
-    */
 
     delay(1000);
 }
