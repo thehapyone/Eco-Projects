@@ -28,6 +28,10 @@
 #define MIN_INTERVAL 2000 /**< min interval value */
 #define TIMEOUT -1        /**< timeout on */
 
+DHT::DHT()
+{
+  
+}
 /*!
  *  @brief  Instantiates a new DHT class
  *  @param  pin

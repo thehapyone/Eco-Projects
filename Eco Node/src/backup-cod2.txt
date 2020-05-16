@@ -22,16 +22,15 @@ float tdsValue = 0;
 UWORD Lux = 0;
 
 // Declare all functions
-uint16_t read_light_sensor(void);
-multiValues read_dht(void);
+uint16_t read_light_sensor();
+multiValues read_dht();
 float ds18b20_temperature(void);
 float tds_sensor(float);
 void sensorsSetup(void);
-void setup_wifi(void);
+void setup_wifi();
 void callback(char* topic, byte* message, unsigned int length);
-void reconnect(void);
-String takeReadings(void);
-void publishData(void);
+void reconnect();
+
 
 // Initialize the EcoSensor library
 // Using the TLS2591X
@@ -42,6 +41,9 @@ EcoSensor waterTempSensor(ECO_DS18B20, waterSensorPin);
 
 // For the DHT Sensor
 EcoSensor dhtMultiSensor(ECO_DHT, DHTPIN, AM2301);
+
+// Hold the results for the DHT sensors
+multiValues my_dht;
 
 // For TDS Sensor
 EcoSensor gravitySensor(ECO_GRAVITY_TDS, TdsSensorPin);
@@ -65,8 +67,6 @@ int value = 0;
 long time_to_send = 5; // in minutes
 // publish topic
 const char pubTopic[] = "eco/sensors/in";
-const char subTopic[] = "eco/sensors/out";
-
 // End of MQTT config
 void setup() {
   // put your setup code here, to run once:
@@ -79,19 +79,6 @@ void setup() {
   delay(1000);
   sensorsSetup();
   Serial.println("All Sensors Initialized");
-}
-
-
-void loop() {
-
-    if (!client.connected()) {
-      reconnect();
-    }
-    client.loop();
-
-    publishData();
-    // easssssy do nothing here
-    delay(10);
 }
 
 void sensorsSetup()
@@ -107,22 +94,11 @@ void sensorsSetup()
   //////////////////////
   gravitySensor.initialize();
 }
-
-String takeReadings(void)
+void takeReadings(void)
 {
   // lux
   Lux = read_light_sensor();
-  // dht
-  // Hold the results for the DHT sensors
-  multiValues my_dht;
-  my_dht = read_dht();
-  // ds18b20
-  float ds_temp = ds18b20_temperature();
-  // tds
-  tdsValue = tds_sensor(ds_temp);
-  // format result to string
-  String output = String(Lux)+","+String(my_dht.humidity)+","+String(my_dht.temperature)+","+String(ds_temp)+","+String(tdsValue);
-  return output;
+
 }
 
 void publishData(void)
@@ -134,20 +110,62 @@ void publishData(void)
   if (now - lastMsg > time_to_millis)
   {
     lastMsg = now;
-    String results = takeReadings();
-
-    uint16_t n = results.length();
+    String results;
 
     // covert the sensor value to a char array
-    char sensorArray[n + 1];
-    // copy contents to the char array
-    strcpy(sensorArray, results.c_str());
+    char sensorArray[8];
+    dtostrf(Lux, 1, 2, sensorArray);
+
     // publish the message to the broker
     client.publish(pubTopic, sensorArray);
-    Serial.print("Published readings: ");
-    Serial.println(results);
   }
 
+}
+void loop() {
+
+    if (!client.connected()) {
+      reconnect();
+    }
+    client.loop();
+
+    long now = millis();
+
+    if (now - lastMsg > 5000)
+    {
+      lastMsg = now;
+      // covert the sensor value to a char array
+      char sensorArray[8];
+      dtostrf(Lux, 1, 2, sensorArray);
+
+      // publish the message to the broker
+      const char pubTopic[] = "eco/sensors/in";
+      client.publish(pubTopic, sensorArray);
+    }
+
+    Lux = read_light_sensor();
+    Serial.print("Lux = ");
+    Serial.print(Lux);
+    Serial.print("\r\n");
+
+    
+    my_dht = read_dht();
+    Serial.println("DHT Results");
+    Serial.print(my_dht.humidity);
+    Serial.print("% : ");
+    Serial.print(my_dht.temperature);
+    Serial.println(F("°C/F "));
+
+    Serial.println("DS18B20 Temperature reading");
+    float temp = ds18b20_temperature();
+    Serial.print(temp);
+    Serial.println(F("°C")); 
+
+
+    tdsValue = tds_sensor(temp);
+    Serial.print(tdsValue, 1);
+    Serial.println("ppm");
+
+    delay(1000);
 }
 
 void setup_wifi() {
@@ -205,7 +223,7 @@ void reconnect() {
     if (client.connect("EcoNodeClient")) {
       Serial.println("connected");
       // Subscribe
-      client.subscribe(subTopic);
+      client.subscribe("eco/sensors/out");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());

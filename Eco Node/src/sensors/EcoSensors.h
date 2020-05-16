@@ -18,15 +18,29 @@
 #include "TSL2591.h"
 #include "OneWire.h"
 #include "DallasTemperature.h"
+#include "DHT.h"
+#include <EEPROM.h>
+#include "sensors/GravityTDS.h"
 
 #define ECO_TLS2591X 1
-#define ECO_AM2301 2
+#define ECO_DHT 2
 #define ECO_DS18B20 3
 #define ECO_GRAVITY_TDS 4
 
+/* 
+Structure For holding Sensors with multiple values
+*/
+struct multiValues
+{
+  /* data */
+  float temperature = 0;
+  float humidity = 0;
+};
 
-#define ONE_WIRE_BUS 4
-
+// Gravity related parameters
+  //////////////////////
+  #define AREF_VOLTAGE 3.3
+  #define ADC_RESOLUTION 4096 //1024 for 10bit ADC;4096 for 12bit AD
 
 
 class EcoSensor
@@ -37,17 +51,21 @@ class EcoSensor
     uint8_t sensorPin = 0;
 
     // variabls for dallas sensors
+    OneWire oneWireDallas;
     DallasTemperature dallasSensors;
+    // Variable for DHT sensor
+    DHT dhtSensors;
+    // Variable for Gravity sensor
+    GravityTDS gravitySensorTds;
 
     uint8_t ECO_ENABLE_DEBUG = 0;
 
     void _initializeSensor();
 
     // for integer base values
-    uint16_t sensorValue = 0;
+    int32_t sensorValue = 0;
     // for floating base values
     float sensorValue_float = 0.0;
-
 
 
     public:
@@ -56,13 +74,24 @@ class EcoSensor
     // Constructor for the Sensor Class
     EcoSensor(uint8_t sensorType);
     EcoSensor(uint8_t sensorType, uint8_t sensorPin);
+    EcoSensor(uint8_t sensorType, uint8_t sensorPin, uint8_t dhtSensorType); // For DHT Sensor type
+
     // deconstructor. remove and clear the memory if needed
     ~EcoSensor();
 
     void initialize();
     void setSensor(uint8_t sensor_type);
     uint8_t getSensor();
+    uint8_t getSensorPin();
+    // single value read
     int16_t readSensor();
+    // single value float read
+    float readSensorFloat();
+    // multiple value read
+    multiValues readSensorAll();
+
+    // For setting configure parameters
+    void setParameter(uint8_t sensor_type, float value);
 
     // debug information
     void enableDebug(void);
