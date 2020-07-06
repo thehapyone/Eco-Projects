@@ -48,12 +48,26 @@ EcoSensor gravitySensor(ECO_GRAVITY_TDS, TdsSensorPin);
 
 // MQTT Settings here
 // Replace the next variables with your SSID/Password combination
-const char* ssid = "The Adventurer";
-const char* password = "sayiloveyou";
+const char* ssid = "Workaround Frihamnen";
+const char* password = "Frihamnen2019";
+
 
 // Add your MQTT Broker IP address, example:
 //const char* mqtt_server = "192.168.1.144";
 const char* mqtt_server = "192.168.1.247";
+
+
+/*
+// MQTT Settings here
+// Replace the next variables with your SSID/Password combination
+const char* ssid = "Workaround Frihamnen";
+const char* password = "Frihamnen2019";
+
+// Add your MQTT Broker IP address, example:
+//const char* mqtt_server = "192.168.1.144";
+//const char* mqtt_server = "192.168.1.247";
+const char* mqtt_server = "192.168.99.243";
+*/
 
 WiFiClient espClient;
 PubSubClient client(espClient);
