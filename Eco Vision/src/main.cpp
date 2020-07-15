@@ -46,8 +46,8 @@ WiFiServer rtspServer(8554);
 
 
 // WiFi Keys - 
-const char* ssid = "The Adventurer";
-const char* password = "sayiloveyou";
+const char* ssid = "Workaround Frihamnen";
+const char* password = "Frihamnen2019";
 
 
 #ifdef ENABLE_WEBSERVER

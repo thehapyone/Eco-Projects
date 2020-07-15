@@ -54,7 +54,7 @@ const char* password = "Frihamnen2019";
 
 // Add your MQTT Broker IP address, example:
 //const char* mqtt_server = "192.168.1.144";
-const char* mqtt_server = "192.168.1.247";
+const char* mqtt_server = "192.168.99.243";
 
 
 /*
@@ -76,7 +76,7 @@ char msg[50];
 int value = 0;
 
 // Time to send data
-long time_to_send = 5; // in minutes
+long time_to_send = 1; // in minutes
 // publish topic
 const char pubTopic[] = "eco/sensors/in";
 const char subTopic[] = "eco/sensors/out";
